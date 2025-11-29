@@ -45,7 +45,7 @@ PDF Summarizer is a web application that allows users to upload PDF files and ge
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/MLAPrince/PDF-summarizer-python-.git
    cd pdf_summarizer
    ```
 
@@ -143,3 +143,4 @@ Upload a PDF file and get a summary.
 
 ## Support
 For support, please contact [your contact information]
+
