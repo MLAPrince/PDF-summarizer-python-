@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  pdf-summarizer:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./frontend:/app/frontend
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DISPLAY=${DISPLAY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: host
+    stdin_open: true
+    tty: true
+    
+    # For Windows/WSL2 users
+    # Uncomment the following lines if you're on Windows/WSL2:
+    # environment:
+    #   - GEMINI_API_KEY=${GEMINI_API_KEY}
+    #   - DISPLAY=host.docker.internal:0.0
+    #   - LIBGL_ALWAYS_INDIRECT=1
+    # volumes:
+    #   - ./frontend:/app/frontend
+    #   - /tmp/.X11-unix:/tmp/.X11-unix
+    #   - ${HOME}/.Xauthority:/root/.Xauthority:ro
+    #   - /mnt/wslg:/mnt/wslg:ro
+    #   - /usr/lib/wsl:/usr/lib/wsl:ro
+    #   - /tmp/.X11-unix:/tmp/.X11-unix:ro
+    #   - /mnt:/mnt:ro

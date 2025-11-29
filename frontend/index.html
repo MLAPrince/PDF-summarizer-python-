@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PDF Summarizer with Custom Prompts</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>PDF Summarizer</h1>
+      <p class="subtitle">Upload a PDF and customize your summary</p>
+
+      <form id="uploadForm">
+        <div class="form-group">
+          <label for="pdfFile">Choose a PDF file:</label>
+          <input type="file" id="pdfFile" class="form-control" accept="application/pdf" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="summaryType">Summary Type:</label>
+          <select id="summaryType" class="form-control">
+            <option value="short">Short (2-3 sentences)</option>
+            <option value="medium" selected>Medium (standard summary)</option>
+            <option value="long">Long (detailed summary)</option>
+            <option value="custom">Custom Prompt</option>
+          </select>
+        </div>
+
+        <div id="customPromptContainer" class="form-group" style="display: none;">
+          <label for="customPrompt">Custom Prompt:</label>
+          <textarea 
+            id="customPrompt" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Enter your custom prompt (e.g., 'Summarize this as a haiku' or 'Explain this like I'm 5')"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn">Generate Summary</button>
+        </div>
+      </form>
+
+      <div id="status" class="status"></div>
+
+      <h2>Summary</h2>
+      <div id="summary" class="summary-box"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
