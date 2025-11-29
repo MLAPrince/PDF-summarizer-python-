@@ -136,11 +136,8 @@ Upload a PDF file and get a summary.
 - Consider implementing rate limiting for production use
 
 ## License
-[Specify your license here]
-
-## Contributing
-[Your contribution guidelines here]
+This project is licensed under the MIT License.
 
 ## Support
-For support, please contact [your contact information]
+For support, please contact hafizismail298@gmail.com
 
