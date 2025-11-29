@@ -1,204 +1,145 @@
-# Simple PDF Summarizer (FastAPI + Gemini)
+# PDF Summarizer - Documentation
 
-A beginner-friendly project that lets you upload a small PDF, summarizes it
-using Google Gemini (Flash model), and shows the summary in the browser.
+## Overview
+PDF Summarizer is a web application that allows users to upload PDF files and generate concise summaries using Google's Gemini AI. The application offers multiple summary types and supports custom prompts for tailored summarization.
 
-- **Backend:** Python, FastAPI, PyPDF2, google-generativeai, Uvicorn
-- **Frontend:** Plain HTML, CSS, and JavaScript (no frameworks)
-- **Storage:** None (everything is processed in memory)
+## Features
 
----
+### 1. Multiple Summary Types
+- **Short**: Brief 2-3 sentence summary
+- **Medium**: Standard summary with key points
+- **Long**: Detailed summary with section headers
+- **Custom**: User-defined prompt for personalized summarization
 
-## Project structure
+### 2. User-Friendly Interface
+- Clean, responsive design
+- Intuitive file upload
+- Real-time status updates
+- Error handling with helpful messages
 
-```text
-pdf_summarizer/
-│── backend/
-│   ├── main.py          # FastAPI app and /summarize endpoint
-│   ├── utils.py         # Small helper functions
-│   ├── requirements.txt # Backend dependencies
-│   └── README.md        # Backend details and deployment notes
-│
-│── frontend/
-│   ├── index.html       # Simple upload page
-│   ├── script.js        # Calls the backend and shows the summary
-│   └── style.css        # Basic styling
-│
-└── README.md            # You are here (project overview)
-```
+## Technical Stack
 
----
+### Backend (FastAPI)
+- **Framework**: FastAPI
+- **Dependencies**:
+  - `fastapi`: Web framework
+  - `uvicorn`: ASGI server
+  - `python-multipart`: File upload handling
+  - `PyPDF2`: PDF text extraction
+  - `google-generativeai`: Gemini AI integration
+  - `python-dotenv`: Environment variable management
 
-## What the app does
+### Frontend
+- **HTML5**: Structure
+- **CSS3**: Styling
+- **JavaScript**: Client-side functionality
 
-1. You open the frontend page.
-2. You select a PDF file (10–20 pages for demo is ideal).
-3. The browser sends the file to the FastAPI backend.
-4. The backend:
-   - reads the PDF in memory
-   - extracts text with PyPDF2
-   - sends the text to Gemini Flash via `google.generativeai`
-   - returns a clean summary as JSON
-5. The frontend displays the summary on the page.
+## Installation
 
-Everything runs in memory. No files are stored on disk or in a database.
+### Prerequisites
+- Python 3.8+
+- Node.js (for frontend development)
+- Google Gemini API key
 
----
+### Setup
 
-## How the backend works (high-level)
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd pdf_summarizer
+   ```
 
-- `main.py`
-  - defines a FastAPI app
-  - adds CORS middleware so the frontend can call it
-  - exposes a `POST /summarize` endpoint that accepts `UploadFile`
-
-- `utils.py`
-  - `extract_text_from_pdf(upload_file)`
-    - reads the uploaded file bytes
-    - uses `PyPDF2.PdfReader` to read up to 20 pages
-    - joins all extracted text into one string
-  - `summarize_text_with_gemini(text)`
-    - configures `google.generativeai` using `GEMINI_API_KEY`
-    - creates a `GenerativeModel("gemini-1.5-flash")`
-    - calls `model.generate_content("Summarize this: " + text)`
-    - returns `response.text` as the summary
-
-The code is intentionally simple: small functions, few dependencies, and
-straightforward control flow.
-
----
-
-## How the frontend works (high-level)
-
-- `index.html`
-  - simple page with a file input and a **Summarize** button
-  - an empty `<div>` where the summary will appear
-
-- `script.js`
-  - listens to the form `submit` event
-  - builds a `FormData` object with the selected file as `file`
-  - sends a `fetch` `POST` request to `http://127.0.0.1:8000/summarize`
-  - reads the JSON response and puts `data.summary` into the summary `<div>`
-  - shows basic status messages and errors
-
-- `style.css`
-  - adds light styling so the page looks clean and readable
-
----
-
-## Running the project locally
-
-### 1. Start the backend
-
-1. Open a terminal in the `backend` folder:
-
+2. **Set up the backend**
    ```bash
    cd backend
-   ```
-
-2. (Optional) Create and activate a virtual environment:
-
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate  # Windows
-   ```
-
-3. Install dependencies:
-
-   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
-4. Set your Gemini API key (Windows PowerShell example):
-
-   ```powershell
-   setx GEMINI_API_KEY "YOUR_API_KEY_HERE"
+3. **Configure environment variables**
+   Create a `.env` file in the `backend` directory:
+   ```
+   GEMINI_API_KEY=your_api_key_here
    ```
 
-   Close and reopen the terminal so the environment variable is loaded.
-
-5. Start the server:
-
+4. **Run the backend server**
    ```bash
    uvicorn main:app --reload
    ```
+   The API will be available at `http://127.0.0.1:8000`
 
-6. Verify it is running:
-   - Open: http://127.0.0.1:8000/
+5. **Open the frontend**
+   - Open `frontend/index.html` in a web browser
+   - Or use a local server (e.g., `python -m http.server` in the frontend directory)
 
-### 2. Open the frontend
+## API Endpoints
 
-1. Open the `frontend/index.html` file in your browser.
-   - You can usually double-click it, or use **Open With → Browser**.
+### POST /summarize
+Upload a PDF file and get a summary.
 
-2. Make sure the backend is running on `http://127.0.0.1:8000`.
+**Request**
+- **Method**: POST
+- **Content-Type**: multipart/form-data
+- **Parameters**:
+  - `file` (required): PDF file to summarize
+  - `prompt_type` (optional): Type of summary (`short`, `medium`, `long`, `custom`)
+  - `custom_prompt` (optional): Custom prompt text (required if `prompt_type` is `custom`)
 
-3. On the page:
-   - Choose a small PDF file.
-   - Click **Summarize**.
-   - Wait for the summary to appear.
+**Response**
+```json
+{
+    "summary": "Generated summary text..."
+}
+```
 
-If you see a message about not reaching the backend, check that Uvicorn is
-still running and that there are no errors in its terminal.
+## Error Handling
 
----
+### Common Error Responses
+- `400 Bad Request`: Invalid file type or missing required fields
+- `500 Internal Server Error`: Server-side error during processing
 
-## Deployment overview
+## Usage Guide
 
-There are many ways to deploy this project. Here are two simple options.
+### Generating a Summary
+1. Open the application in your web browser
+2. Click "Choose a PDF file" and select your PDF
+3. Select a summary type (Short, Medium, Long, or Custom)
+4. If using Custom, enter your prompt in the text area
+5. Click "Generate Summary"
+6. View the generated summary in the results area
 
-### Option 1: Railway (recommended for beginners)
+### Tips for Best Results
+- For technical documents, use the "Long" summary type
+- For quick overviews, use the "Short" summary type
+- When using custom prompts, be specific about the information you want highlighted
+- Keep custom prompts concise but clear
 
-1. Put this `pdf_summarizer` project in a GitHub repo.
-2. Go to https://railway.app and create a new project.
-3. Connect your GitHub repo and choose it for deployment.
-4. In the service settings:
-   - Set **Root Directory** to `backend` (so it uses the backend folder).
-   - Set the **Start Command** to:
+## Troubleshooting
 
-     ```bash
-     uvicorn main:app --host 0.0.0.0 --port $PORT
-     ```
+### Common Issues
+1. **File not uploading**
+   - Ensure the file is a valid PDF
+   - Check file size (large files may take longer to process)
 
-   - Add an environment variable:
-     - Key: `GEMINI_API_KEY`
-     - Value: your actual Gemini API key.
+2. **API Key not found**
+   - Verify the `.env` file exists in the backend directory
+   - Ensure the `GEMINI_API_KEY` is set correctly
 
-5. Deploy. Railway will install `requirements.txt` and run the server.
-6. After deploy, Railway gives you a URL like
-   `https://your-app-name.up.railway.app`.
-7. Update `frontend/script.js` so `fetch` points to your Railway URL.
-8. Host the `frontend` folder as static files (or open `index.html` locally
-   to test hitting the Railway backend).
+3. **Server not responding**
+   - Check if the backend server is running
+   - Verify the server address in the frontend JavaScript matches the backend URL
 
-### Option 2: Vercel (serverless function)
+## Security Considerations
+- API keys should never be committed to version control
+- The application processes files on the server; ensure proper security measures are in place in production
+- Consider implementing rate limiting for production use
 
-Vercel is great for static frontends but can also run small Python
-serverless functions.
+## License
+[Specify your license here]
 
-A simple approach:
+## Contributing
+[Your contribution guidelines here]
 
-1. Host only the `frontend` folder on Vercel (very easy).
-2. Deploy the FastAPI backend on Railway or another service.
-3. Point the frontend `fetch` URL to that backend.
-
-This keeps the setup simple and avoids complex serverless FastAPI configs.
-
----
-
-## Example screenshots (placeholders)
-
-You can add screenshots here later, for example:
-
-- `screenshots/upload-page.png` — the upload page with a file selected.
-- `screenshots/summary-result.png` — the page showing a generated summary.
-
-In a real project, you would commit PNG files and reference them here.
-
----
-
-This project is designed so a beginner can explain it in an interview:
-- clear folder structure
-- small functions
-- straightforward API call to Gemini
-- easy local run and deployment story.
+## Support
+For support, please contact [your contact information]
